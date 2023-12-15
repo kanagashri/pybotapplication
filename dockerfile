@@ -1,16 +1,21 @@
-FROM ubuntu:20.04
-MAINTAINER shrikanaga5@gmail.com
+# Use an official Python runtime as a base image
+FROM python:3.8
 
-RUN apt-get update -y
-RUN apt-get install python3-pip -y
-RUN apt-get install gunicorn3 -y
+# Set the working directory in the container
+WORKDIR /app
 
-COPY requirements.txt requirements.txt
-COPY flaskapp /opt/
+# Copy the application files into the container at /app
+COPY requirements.txt /app/
 
-RUN pip3 install -r requirement.txt
-WORKDIR /opt/
+# Install any needed packages specified in requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
+COPY . /app/
+# Make port 5000 available to the world outside this container
 EXPOSE 5000
 
-CMD ["gunicorn3", "-b", "0.0,0.0:5000", "app:app", "--workers=5"]
+# Define environment variable
+ENV FLASK_APP=app.py
+
+# Run the application
+CMD ["python", "app.py", "--host=0.0.0.0"]
